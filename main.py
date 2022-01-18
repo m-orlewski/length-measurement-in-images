@@ -34,15 +34,10 @@ class App:
                                             filetypes= (('JPG','*.jpg'), ('PNG','*.png'), ('JPEG','*.jpeg')))
 
         try:
-            img = cv2.imread(filepath)
-            labeled_image = labelObjects(img)
+            self.img = cv2.imread(filepath)
+            self.labeled_image, count = labelObjects(self.img)
 
-            self.choice['values'] = ('1',
-                                '2',
-                                '3',
-                                '4',
-                                '5',
-                                '6')
+            self.choice['values'] = tuple([str(i+1) for i in range(count)])
             self.choice.current(0)
             self.choice.pack()
             self.choice.place(x=10, y=100)
@@ -53,7 +48,8 @@ class App:
 
     def measureLengths(self):
         choice =self.label_choice.get()
-        measured_image = measureObjects(choice)
+        width = 100
+        measured_image = measureObjects(choice, width)
 
 
 if __name__ == '__main__':

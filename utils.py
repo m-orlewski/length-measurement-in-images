@@ -10,11 +10,13 @@ def labelObjects(img):
     edged = cv2.dilate(edged, None, iterations=1)
     edges = cv2.erode(edged, None, iterations=1)
 
-    contours = cv2.findContours(edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    contours, hierarchy = cv2.findContours(edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    objects = 0
 
     for (i,c) in enumerate(contours):
         if cv2.contourArea(c) < 100:
             continue
+        objects += 1
         M= cv2.moments(c)
         cx= int(M['m10']/M['m00']) - 10
         cy= int(M['m01']/M['m00']) + 10
@@ -22,6 +24,10 @@ def labelObjects(img):
                 fontFace= cv2.FONT_HERSHEY_SIMPLEX, fontScale=1.5, color=(0,0,0),
                 thickness=2, lineType=cv2.LINE_AA)
 
+    return img, objects
+
+def measureObjects(choice, width):
+    pass
            
 if __name__ == '__main__':
     labelObjects(1)
