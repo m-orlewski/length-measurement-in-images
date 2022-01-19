@@ -35,7 +35,7 @@ class App:
 
         try:
             self.img = cv2.imread(filepath)
-            self.labeled_image, count = labelObjects(self.img)
+            self.labeled_image, count, self.edges = labelObjects(self.img)
 
             self.choice['values'] = tuple([str(i+1) for i in range(count)])
             self.choice.current(0)
@@ -48,8 +48,8 @@ class App:
 
     def measureLengths(self):
         choice =self.label_choice.get()
-        width = 100
-        measured_image = measureObjects(choice, width)
+        width = 0.88
+        measured_image = measureObjects(self.edges, choice, width, self.img)
 
 
 if __name__ == '__main__':
