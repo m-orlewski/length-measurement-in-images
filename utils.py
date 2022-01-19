@@ -35,11 +35,15 @@ def measureObjects(edges, choice, width, img):
     contours = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contours = imutils.grab_contours(contours)
 
+    contours = list(contours)
+    for i, contour in enumerate(contours):
+        if cv2.contourArea(contour) < 100:
+            contours.remove(contour)
+            
+
     pixels_per_metric = calculatePixelsPerMetric(contours[int(choice)-1], width)
 
     for contour in contours:
-        if cv2.contourArea(contour) < 100:
-            continue
         box = cv2.minAreaRect(contour)
         if imutils.is_cv2():
             box = cv2.cv.BoxPoints(box)
