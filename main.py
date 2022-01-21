@@ -9,22 +9,33 @@ class App:
     def __init__(self):
         self.window = tk.Tk()
         self.window.title('Pomiary długości na obrazie')
-        self.window.geometry('1000x1000')
-
+        self.window.geometry('1280x720')
 
         self.button_load = tk.Button(self.window, text = 'Wczytaj obraz', command = lambda: self.loadImage())
         self.button_load.place(x=10, y=10)
 
+        self.labelHeight = tk.StringVar()
+        self.labelHeight.set('Podaj wysokość obiektu referencyjnego(cm):')
+        self.label2 = tk.Label(self.window, textvariable=self.labelHeight)
+        self.label2.place(x=10, y=50)
+        self.heightEntry = tk.Entry(self.window)
+        self.heightEntry.place(x=10, y=80)
 
-        self.label_choice = tk.StringVar()
-        self.choice = ttk.Combobox(self.window, textvariable=self.label_choice)
-        self.choice.grid(column = 1, row = 5)
-        self.choice.pack()
-        self.choice.pack_forget()
+        self.labelChoice = tk.StringVar()
+        self.labelChoice.set('Wybierz obiekt referencyjny:')
+        self.label3 = tk.Label(self.window, textvariable=self.labelChoice)
+        self.label3.place(x=10, y=110)
+        self.n = tk.StringVar()
+        self.choice = ttk.Combobox(self.window, textvariable=self.n)
+        self.choice.place(x=10, y=140)
 
         self.measure_button = tk.Button(self.window, text = 'Pomiar długości', command = lambda: self.measureLengths())
         self.measure_button.pack()
         self.measure_button.pack_forget()
+
+        self.label = tk.Label(self.window, pady=20)
+        self.label.pack(pady=(10, 0))
+
 
         self.window.mainloop()
 
@@ -39,18 +50,27 @@ class App:
 
             self.choice['values'] = tuple([str(i+1) for i in range(count)])
             self.choice.current(0)
-            self.choice.pack()
-            self.choice.place(x=10, y=100)
             self.measure_button.pack()
             self.measure_button.place(x=10, y=200)
+
+            self.displayImage(self.img)
+            
         except IOError:
             print('Unable to open file!')
 
     def measureLengths(self):
-        choice =self.label_choice.get()
-        width = 0.88
+        choice = self.n.get()
+        width = float(self.heightEntry.get())
         measured_image = measureObjects(self.edges, choice, width, self.img)
+        self.displayImage(measured_image)
 
+    def displayImage(self, img):
+        w = int(700 * img.shape[1] / img.shape[0])
+        img = cv2.resize(img, (w, 700))
+        img = Image.fromarray(img)
+        img = ImageTk.PhotoImage(img)
+        self.label.imgtk = img
+        self.label.configure(image=img, width=w, height=700)
 
 if __name__ == '__main__':
     app = App()
