@@ -61,16 +61,26 @@ class App:
     def measureLengths(self):
         choice = self.n.get()
         width = float(self.heightEntry.get())
-        measured_image = measureObjects(self.edges, choice, width, self.img)
+        measured_image = measureObjects(self.edges, choice, width, self.img.copy())
         self.displayImage(measured_image)
 
     def displayImage(self, img):
-        w = int(700 * img.shape[1] / img.shape[0])
-        img = cv2.resize(img, (w, 700))
+        w = 0
+        h = 0
+        if img.shape[0] > img.shape[1]:
+            h = int(500 * img.shape[0] / img.shape[1])
+            img = cv2.resize(img, (500, h))
+        else:
+            w = int(700 * img.shape[1] / img.shape[0])
+            img = cv2.resize(img, (w, 700))
+        
         img = Image.fromarray(img)
         img = ImageTk.PhotoImage(img)
         self.label.imgtk = img
-        self.label.configure(image=img, width=w, height=700)
+        if w:
+            self.label.configure(image=img, width=w, height=700)
+        else:
+            self.label.configure(image=img, width=500, height=h)
 
 if __name__ == '__main__':
     app = App()

@@ -18,7 +18,7 @@ def labelObjects(img):
     objects = 0
 
     for c in contours:
-        if cv2.contourArea(c) < 100:
+        if cv2.contourArea(c) < 70:
             continue
         objects += 1
         M= cv2.moments(c)
@@ -36,7 +36,7 @@ def measureObjects(edges, choice, width, img):
 
     contours = list(contours)
     for i, contour in enumerate(contours):
-        if cv2.contourArea(contour) < 100:
+        if cv2.contourArea(contour) < 70:
             contours.remove(contour)
             
 
@@ -52,7 +52,7 @@ def measureObjects(edges, choice, width, img):
         box = np.array(box, dtype='int')
         box = perspective.order_points(box)
 
-        cv2.drawContours(img, [box.astype('int')], -1, (255, 0, 0), 2)
+    
 
         (tl, tr, br, bl) = box
         (tltrX, tltrY) = midpoint(tl, tr)
@@ -72,6 +72,8 @@ def measureObjects(edges, choice, width, img):
         cv2.putText(img, "{:.3f}cm".format(dimB),
 		(int(trbrX + 10), int(trbrY)), cv2.FONT_HERSHEY_SIMPLEX,
 		0.65, (255, 255, 255), 2)
+
+        cv2.drawContours(img, [box.astype('int')], -1, (255, 0, 0), 2)
 
     return img
 
