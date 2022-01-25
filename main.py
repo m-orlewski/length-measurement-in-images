@@ -6,14 +6,17 @@ from PIL import Image, ImageTk
 from utils import *
 
 class App:
+    '''Główne okno aplikacji'''
     def __init__(self):
         self.window = tk.Tk()
         self.window.title('Pomiary długości na obrazie')
         self.window.geometry('1280x720')
 
+        #Guzik do wczytywania obrazu
         self.button_load = tk.Button(self.window, text = 'Wczytaj obraz', command = lambda: self.loadImage())
         self.button_load.place(x=10, y=10)
 
+        #Pole do wpisania szerokości obiektu referencyjnego
         self.labelWidth = tk.StringVar()
         self.labelWidth.set('Podaj szerokość obiektu referencyjnego(cm):')
         self.label2 = tk.Label(self.window, textvariable=self.labelWidth)
@@ -21,6 +24,7 @@ class App:
         self.widthEntry = tk.Entry(self.window)
         self.widthEntry.place(x=10, y=80)
 
+        #Pole wyboru obiektu referencyjnego
         self.labelChoice = tk.StringVar()
         self.labelChoice.set('Wybierz obiekt referencyjny:')
         self.label3 = tk.Label(self.window, textvariable=self.labelChoice)
@@ -29,6 +33,7 @@ class App:
         self.choice = ttk.Combobox(self.window, textvariable=self.n)
         self.choice.place(x=10, y=140)
 
+        #Guzik do obliczenia wymiarów obiektów 
         self.measure_button = tk.Button(self.window, text = 'Pomiar długości', command = lambda: self.measureLengths())
         self.measure_button.pack()
         self.measure_button.pack_forget()
@@ -40,6 +45,7 @@ class App:
         self.window.mainloop()
 
     def loadImage(self):
+        '''Wczytywanie obrazu'''
         filepath = filedialog.askopenfilename(initialdir=os.getcwd(),
                                             title='Wybierz obraz',
                                             filetypes= (('JPG','*.jpg'), ('PNG','*.png'), ('JPEG','*.jpeg')))
@@ -59,12 +65,14 @@ class App:
             print('Unable to open file!')
 
     def measureLengths(self):
+        '''Pomiary długości'''
         choice = self.n.get()
         width = float(self.widthEntry.get())
         measured_image = measureObjects(self.edges, choice, width, self.img.copy())
         self.displayImage(measured_image)
 
     def displayImage(self, img):
+        '''Wyświetlanie obrazu'''
         w = 0
         h = 0
         if img.shape[0] > img.shape[1]:
