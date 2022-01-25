@@ -1,7 +1,6 @@
 import cv2
 import imutils
 from imutils import perspective
-import math
 import numpy as np
 from scipy.spatial import distance
 
@@ -26,7 +25,7 @@ def labelObjects(img):
         cx= int(M['m10']/M['m00']) - 10
         cy= int(M['m01']/M['m00']) + 10
         cv2.putText(img, text= str(objects), org=(cx,cy),
-                fontFace= cv2.FONT_HERSHEY_SIMPLEX, fontScale=1.5, color=(0,0,0),
+                fontFace= cv2.FONT_HERSHEY_SIMPLEX, fontScale=1.5, color=(0,255,0),
                 thickness=2, lineType=cv2.LINE_AA)
 
     return img, objects, edges
@@ -53,7 +52,7 @@ def measureObjects(edges, choice, width, img):
         box = np.array(box, dtype='int')
         box = perspective.order_points(box)
 
-        cv2.drawContours(edges, [box.astype('int')], -1, (255, 0, 0), 2)
+        cv2.drawContours(img, [box.astype('int')], -1, (255, 0, 0), 2)
 
         (tl, tr, br, bl) = box
         (tltrX, tltrY) = midpoint(tl, tr)
@@ -78,7 +77,11 @@ def measureObjects(edges, choice, width, img):
 
 def calculatePixelsPerMetric(contours, width):
         box = cv2.minAreaRect(contours)
-        box = cv2.cv.BoxPoints(box) if imutils.is_cv2() else cv2.boxPoints(box)
+        
+        if imutils.is_cv2():
+            box = cv2.cv.BoxPoints(box)
+        else:
+            box = cv2.boxPoints(box)
         box = np.array(box, dtype="int")
         box = imutils.perspective.order_points(box)
 
@@ -89,5 +92,5 @@ def calculatePixelsPerMetric(contours, width):
 
         return dB/width
         
-def midpoint(ptA, ptB):
-	return ((ptA[0] + ptB[0]) * 0.5, (ptA[1] + ptB[1]) * 0.5)
+def midpoint(A, B):
+	return ((A[0] + B[0]) * 0.5, (A[1] + B[1]) * 0.5)

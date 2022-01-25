@@ -2,7 +2,7 @@ import os
 import cv2
 import tkinter as tk
 from tkinter import filedialog, ttk
-from PIL import Image, ImageTk, _tkinter_finder
+from PIL import Image, ImageTk
 from utils import *
 
 class App:
