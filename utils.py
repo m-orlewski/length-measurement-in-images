@@ -6,7 +6,7 @@ from scipy.spatial import distance
 
 
 def labelObjects(img):
-   
+    '''Oznacza obiekty na obrazie i numeruje je'''
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (7, 7), 0)
     
@@ -14,9 +14,11 @@ def labelObjects(img):
     edged = cv2.dilate(edged, None, iterations=1)
     edges = cv2.erode(edged, None, iterations=1)
 
+    #kontury obiektów
     contours, hierarchy = cv2.findContours(edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     objects = 0
 
+    #odrzucenie obiektów o małej powierzchni i ponumerowanie pozostałych
     for c in contours:
         if cv2.contourArea(c) < 70:
             continue
@@ -34,10 +36,11 @@ def measureObjects(edges, choice, width, img):
     contours = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contours = imutils.grab_contours(contours)
 
-    contours = list(contours)
-    for i, contour in enumerate(contours):
-        if cv2.contourArea(contour) < 70:
-            contours.remove(contour)
+    old_contours = list(contours)
+    contours = []
+    for i, contour in enumerate(old_contours):
+        if cv2.contourArea(contour) > 70:
+            contours.append(contour)
             
 
     pixels_per_metric = calculatePixelsPerMetric(contours[int(choice)-1], width)
@@ -66,10 +69,10 @@ def measureObjects(edges, choice, width, img):
         dimA = dA / pixels_per_metric
         dimB = dB / pixels_per_metric
 
-        cv2.putText(img, "{:.3f}cm".format(dimA),
+        cv2.putText(img, "{:.3f}cm".format(dimB),
 		(int(tltrX - 15), int(tltrY - 10)), cv2.FONT_HERSHEY_SIMPLEX,
 		0.65, (255, 255, 255), 2)
-        cv2.putText(img, "{:.3f}cm".format(dimB),
+        cv2.putText(img, "{:.3f}cm".format(dimA),
 		(int(trbrX + 10), int(trbrY)), cv2.FONT_HERSHEY_SIMPLEX,
 		0.65, (255, 255, 255), 2)
 

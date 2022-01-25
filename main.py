@@ -14,12 +14,12 @@ class App:
         self.button_load = tk.Button(self.window, text = 'Wczytaj obraz', command = lambda: self.loadImage())
         self.button_load.place(x=10, y=10)
 
-        self.labelHeight = tk.StringVar()
-        self.labelHeight.set('Podaj wysokość obiektu referencyjnego(cm):')
-        self.label2 = tk.Label(self.window, textvariable=self.labelHeight)
+        self.labelWidth = tk.StringVar()
+        self.labelWidth.set('Podaj szerokość obiektu referencyjnego(cm):')
+        self.label2 = tk.Label(self.window, textvariable=self.labelWidth)
         self.label2.place(x=10, y=50)
-        self.heightEntry = tk.Entry(self.window)
-        self.heightEntry.place(x=10, y=80)
+        self.widthEntry = tk.Entry(self.window)
+        self.widthEntry.place(x=10, y=80)
 
         self.labelChoice = tk.StringVar()
         self.labelChoice.set('Wybierz obiekt referencyjny:')
@@ -60,7 +60,7 @@ class App:
 
     def measureLengths(self):
         choice = self.n.get()
-        width = float(self.heightEntry.get())
+        width = float(self.widthEntry.get())
         measured_image = measureObjects(self.edges, choice, width, self.img.copy())
         self.displayImage(measured_image)
 
@@ -74,7 +74,7 @@ class App:
             w = int(700 * img.shape[1] / img.shape[0])
             img = cv2.resize(img, (w, 700))
         
-        img = Image.fromarray(img)
+        img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
         img = ImageTk.PhotoImage(img)
         self.label.imgtk = img
         if w:
